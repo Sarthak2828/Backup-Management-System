@@ -1,0 +1,49 @@
+# OS Garbage
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+powershell.bat
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.classpath
+.project
+.settings/
+.nbproject/
+*.log
+
+# Backend (Spring Boot / Java)
+**/target/
+**/bin/
+**/out/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+**/*.zip
+**/*.tar.gz
+**/*.rar
+**/backups/
+
+# Frontend (React / Node / Vite)
+**/node_modules/
+**/dist/
+**/build/
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.pnp*
+.pnp.js
