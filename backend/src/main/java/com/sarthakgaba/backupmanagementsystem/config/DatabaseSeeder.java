@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class DatabaseSeeder implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseSeeder.class);
-    
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -24,24 +24,28 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (userRepository.findByUsername("admin") == null) {
-            User admin = new User();
+        // Guarantee Admin user exists with BCrypt password 'password'
+        User admin = userRepository.findByUsername("admin");
+        if (admin == null) {
+            admin = new User();
             admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("password"));
             admin.setEmail("admin@backup.local");
-            admin.setRole(Role.ADMIN);
-            userRepository.save(admin);
-            log.info("Seeded default admin user: admin / password (ADMIN)");
         }
+        admin.setPassword(passwordEncoder.encode("password"));
+        admin.setRole(Role.ADMIN);
+        userRepository.save(admin);
+        log.info("Seeded/Updated default admin user: admin / password (ADMIN)");
 
-        if (userRepository.findByUsername("auditor") == null) {
-            User auditor = new User();
+        // Guarantee Auditor user exists with BCrypt password 'password'
+        User auditor = userRepository.findByUsername("auditor");
+        if (auditor == null) {
+            auditor = new User();
             auditor.setUsername("auditor");
-            auditor.setPassword(passwordEncoder.encode("password"));
             auditor.setEmail("auditor@backup.local");
-            auditor.setRole(Role.USER);
-            userRepository.save(auditor);
-            log.info("Seeded default auditor user: auditor / password (AUDITOR)");
         }
+        auditor.setPassword(passwordEncoder.encode("password"));
+        auditor.setRole(Role.AUDITOR);
+        userRepository.save(auditor);
+        log.info("Seeded/Updated default auditor user: auditor / password (AUDITOR)");
     }
 }

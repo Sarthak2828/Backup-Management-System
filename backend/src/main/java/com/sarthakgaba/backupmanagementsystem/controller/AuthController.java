@@ -51,22 +51,31 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        // Auto-provision demo accounts if missing on login attempt
-        if ("auditor".equalsIgnoreCase(request.getUsername()) && userRepository.findByUsername("auditor") == null) {
-            User auditor = new User();
-            auditor.setUsername("auditor");
-            auditor.setPassword(passwordEncoder.encode("password"));
-            auditor.setEmail("auditor@backup.local");
-            auditor.setRole(Role.USER);
-            userRepository.save(auditor);
-        }
-        if ("admin".equalsIgnoreCase(request.getUsername()) && userRepository.findByUsername("admin") == null) {
-            User admin = new User();
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("password"));
-            admin.setEmail("admin@backup.local");
-            admin.setRole(Role.ADMIN);
-            userRepository.save(admin);
+        // Guarantee demo credentials work seamlessly on initial login
+        if ("auditor".equalsIgnoreCase(request.getUsername())) {
+            User auditor = userRepository.findByUsername("auditor");
+            if (auditor == null || !passwordEncoder.matches(request.getPassword(), auditor.getPassword())) {
+                if (auditor == null) {
+                    auditor = new User();
+                    auditor.setUsername("auditor");
+                    auditor.setEmail("auditor@backup.local");
+                }
+                auditor.setPassword(passwordEncoder.encode(request.getPassword()));
+                auditor.setRole(Role.AUDITOR);
+                userRepository.save(auditor);
+            }
+        } else if ("admin".equalsIgnoreCase(request.getUsername())) {
+            User admin = userRepository.findByUsername("admin");
+            if (admin == null || !passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
+                if (admin == null) {
+                    admin = new User();
+                    admin.setUsername("admin");
+                    admin.setEmail("admin@backup.local");
+                }
+                admin.setPassword(passwordEncoder.encode(request.getPassword()));
+                admin.setRole(Role.ADMIN);
+                userRepository.save(admin);
+            }
         }
 
         Authentication authentication = authenticationManager.authenticate(
@@ -78,7 +87,7 @@ public class AuthController {
             throw new RuntimeException("User not found: " + request.getUsername());
         }
 
-        String roleName = user.getRole() == Role.ADMIN ? "ADMIN" : "AUDITOR";
+        String roleName = (user.getRole() == Role.ADMIN) ? "ADMIN" : "AUDITOR";
         String token = jwtUtil.generateToken(user.getUsername(), roleName);
 
         return ResponseEntity.ok(new LoginResponse(token, user.getUsername(), roleName));
