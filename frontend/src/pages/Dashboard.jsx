@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { backupService } from '../services/api';
+import { authService, backupService } from '../services/api';
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);

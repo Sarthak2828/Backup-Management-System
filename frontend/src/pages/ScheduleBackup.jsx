@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { backupService } from '../services/api';
+import { authService, backupService } from '../services/api';
 
 const ScheduleBackup = () => {
   const [formData, setFormData] = useState({

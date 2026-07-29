@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { backupService } from '../services/api';
+import { authService, backupService } from '../services/api';
 
 const BackupHistory = () => {
   const [backups, setBackups] = useState([]);
