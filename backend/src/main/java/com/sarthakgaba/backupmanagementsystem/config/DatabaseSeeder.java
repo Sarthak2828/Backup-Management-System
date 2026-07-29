@@ -24,26 +24,24 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (userRepository.count() == 0) {
-            log.info("Database is empty. Seeding default credentials...");
-            
-            // Seed Admin
+        if (userRepository.findByUsername("admin") == null) {
             User admin = new User();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("password"));
             admin.setEmail("admin@backup.local");
             admin.setRole(Role.ADMIN);
             userRepository.save(admin);
-            
-            // Seed Auditor
+            log.info("Seeded default admin user: admin / password (ADMIN)");
+        }
+
+        if (userRepository.findByUsername("auditor") == null) {
             User auditor = new User();
             auditor.setUsername("auditor");
             auditor.setPassword(passwordEncoder.encode("password"));
             auditor.setEmail("auditor@backup.local");
             auditor.setRole(Role.USER);
             userRepository.save(auditor);
-            
-            log.info("Default users seeded: admin/password (ADMIN) and auditor/password (AUDITOR)");
+            log.info("Seeded default auditor user: auditor / password (AUDITOR)");
         }
     }
 }
