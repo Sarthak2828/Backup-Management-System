@@ -61,7 +61,7 @@ public class AuthController {
                     auditor.setEmail("auditor@backup.local");
                 }
                 auditor.setPassword(passwordEncoder.encode(request.getPassword()));
-                auditor.setRole(Role.AUDITOR);
+                auditor.setRole(Role.USER);
                 userRepository.save(auditor);
             }
         } else if ("admin".equalsIgnoreCase(request.getUsername())) {

@@ -34,7 +34,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         admin.setPassword(passwordEncoder.encode("password"));
         admin.setRole(Role.ADMIN);
         userRepository.save(admin);
-        log.info("Seeded/Updated default admin user: admin / password (ADMIN)");
+        log.info("Seeded/Updated admin user: admin / password (ADMIN)");
 
         // Guarantee Auditor user exists with BCrypt password 'password'
         User auditor = userRepository.findByUsername("auditor");
@@ -44,8 +44,8 @@ public class DatabaseSeeder implements CommandLineRunner {
             auditor.setEmail("auditor@backup.local");
         }
         auditor.setPassword(passwordEncoder.encode("password"));
-        auditor.setRole(Role.AUDITOR);
+        auditor.setRole(Role.USER);
         userRepository.save(auditor);
-        log.info("Seeded/Updated default auditor user: auditor / password (AUDITOR)");
+        log.info("Seeded/Updated auditor user: auditor / password (AUDITOR)");
     }
 }
