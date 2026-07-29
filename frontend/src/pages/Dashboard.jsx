@@ -72,13 +72,15 @@ const Dashboard = () => {
           <h2 className="fw-bold mb-1">Welcome back!</h2>
           <p className="text-muted m-0">All automated systems are functioning within normal operational limits.</p>
         </div>
-        <button 
-          onClick={() => navigate('/schedule')}
-          className="btn btn-primary d-flex align-items-center gap-2"
-        >
-          <i className="bi bi-plus-lg"></i>
-          <span>Schedule Backup</span>
-        </button>
+        {authService.getCurrentUser()?.role === 'ADMIN' && (
+          <button 
+            onClick={() => navigate('/schedule')}
+            className="btn btn-primary d-flex align-items-center gap-2"
+          >
+            <i className="bi bi-plus-lg"></i>
+            <span>Schedule Backup</span>
+          </button>
+        )}
       </div>
 
       {/* Metrics Row */}

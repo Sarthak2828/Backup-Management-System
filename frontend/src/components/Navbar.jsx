@@ -4,6 +4,7 @@ import { authService } from '../services/api';
 const Navbar = ({ toggleSidebar, title }) => {
   const currentUser = authService.getCurrentUser();
   const username = currentUser ? currentUser.username : 'Guest User';
+  const role = currentUser ? currentUser.role : 'USER';
 
   return (
     <nav className="navbar navbar-expand-lg top-navbar px-3 d-flex align-items-center justify-content-between">
@@ -25,7 +26,7 @@ const Navbar = ({ toggleSidebar, title }) => {
         <div className="d-flex align-items-center gap-2">
           <div className="text-end d-none d-md-block">
             <div className="fw-semibold text-dark fs-6">{username}</div>
-            <small className="text-muted text-uppercase" style={{ fontSize: '0.65rem', letterSpacing: '0.05em' }}>Administrator</small>
+            <small className="text-muted text-uppercase" style={{ fontSize: '0.65rem', letterSpacing: '0.05em' }}>{role}</small>
           </div>
           <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style={{ width: '40px', height: '40px' }}>
             {username.charAt(0).toUpperCase()}

@@ -4,6 +4,8 @@ import { authService } from '../services/api';
 
 const Sidebar = ({ show, toggleSidebar }) => {
   const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+  const isAdmin = currentUser?.role === 'ADMIN';
 
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to log out?')) {
@@ -52,14 +54,16 @@ const Sidebar = ({ show, toggleSidebar }) => {
             <span>Backup History</span>
           </NavLink>
 
-          <NavLink 
-            to="/schedule" 
-            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-            onClick={toggleSidebar}
-          >
-            <i className="bi bi-calendar-plus"></i>
-            <span>Schedule Backup</span>
-          </NavLink>
+          {isAdmin && (
+            <NavLink 
+              to="/schedule" 
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              onClick={toggleSidebar}
+            >
+              <i className="bi bi-calendar-plus"></i>
+              <span>Schedule Backup</span>
+            </NavLink>
+          )}
         </nav>
       </div>
 

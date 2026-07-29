@@ -311,59 +311,63 @@ const BackupHistory = () => {
                         )}
                       </td>
                       <td className="text-end">
-                        <div className="d-inline-flex gap-2">
-                          <button
-                            onClick={() => handleRunBackup(item.id)}
-                            className="btn btn-sm btn-outline-primary"
-                            title="Run Immediately"
-                            disabled={actionId !== null}
-                          >
-                            {actionId === 'run_' + item.id ? (
-                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            ) : (
-                              <i className="bi bi-play-fill"></i>
-                            )}
-                          </button>
+                        {authService.getCurrentUser()?.role === 'ADMIN' ? (
+                          <div className="d-inline-flex gap-2">
+                            <button
+                              onClick={() => handleRunBackup(item.id)}
+                              className="btn btn-sm btn-outline-primary"
+                              title="Run Immediately"
+                              disabled={actionId !== null}
+                            >
+                              {actionId === 'run_' + item.id ? (
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              ) : (
+                                <i className="bi bi-play-fill"></i>
+                              )}
+                            </button>
 
-                          <button
-                            onClick={() => handleDownloadBackup(item.id, item.backupName)}
-                            className="btn btn-sm btn-outline-success"
-                            title="Download Backup"
-                            disabled={actionId !== null || item.status !== 'COMPLETED'}
-                          >
-                            {actionId === 'download_' + item.id ? (
-                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            ) : (
-                              <i className="bi bi-download"></i>
-                            )}
-                          </button>
+                            <button
+                              onClick={() => handleDownloadBackup(item.id, item.backupName)}
+                              className="btn btn-sm btn-outline-success"
+                              title="Download Backup"
+                              disabled={actionId !== null || item.status !== 'COMPLETED'}
+                            >
+                              {actionId === 'download_' + item.id ? (
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              ) : (
+                                <i className="bi bi-download"></i>
+                              )}
+                            </button>
 
-                          <button
-                            onClick={() => handleRestoreBackup(item.id)}
-                            className="btn btn-sm btn-outline-warning"
-                            title="Restore Backup"
-                            disabled={actionId !== null || item.status !== 'COMPLETED'}
-                          >
-                            {actionId === 'restore_' + item.id ? (
-                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            ) : (
-                              <i className="bi bi-arrow-counterclockwise"></i>
-                            )}
-                          </button>
+                            <button
+                              onClick={() => handleRestoreBackup(item.id)}
+                              className="btn btn-sm btn-outline-warning"
+                              title="Restore Backup"
+                              disabled={actionId !== null || item.status !== 'COMPLETED'}
+                            >
+                              {actionId === 'restore_' + item.id ? (
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              ) : (
+                                <i className="bi bi-arrow-counterclockwise"></i>
+                              )}
+                            </button>
 
-                          <button
-                            onClick={() => handleDeleteBackup(item.id)}
-                            className="btn btn-sm btn-outline-danger"
-                            title="Delete Backup"
-                            disabled={actionId !== null}
-                          >
-                            {actionId === 'delete_' + item.id ? (
-                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            ) : (
-                              <i className="bi bi-trash"></i>
-                            )}
-                          </button>
-                        </div>
+                            <button
+                              onClick={() => handleDeleteBackup(item.id)}
+                              className="btn btn-sm btn-outline-danger"
+                              title="Delete Backup"
+                              disabled={actionId !== null}
+                            >
+                              {actionId === 'delete_' + item.id ? (
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              ) : (
+                                <i className="bi bi-trash"></i>
+                              )}
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="badge bg-secondary-subtle text-secondary border">Read-Only</span>
+                        )}
                       </td>
                     </tr>
                   ))

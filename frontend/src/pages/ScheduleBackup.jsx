@@ -13,6 +13,21 @@ const ScheduleBackup = () => {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+  const isAdmin = currentUser?.role === 'ADMIN';
+
+  if (!isAdmin) {
+    return (
+      <div className="card border-0 shadow-sm p-4 text-center my-4">
+        <i className="bi bi-shield-lock-fill text-warning display-4 mb-3"></i>
+        <h4>Access Restricted</h4>
+        <p className="text-muted">You are logged in with Auditor (Read-Only) permissions. Only Administrators can create or modify backup schedules.</p>
+        <div>
+          <button className="btn btn-primary px-4" onClick={() => navigate('/')}>Return to Dashboard</button>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
