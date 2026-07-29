@@ -43,7 +43,7 @@ const BackupHistory = () => {
       alert('Backup completed successfully!');
       await loadHistory();
     } catch (error) {
-      alert('Backup FAILED.');
+      alert(error.message || 'Backup execution failed.');
     } finally {
       setActionId(null);
     }
@@ -59,7 +59,7 @@ const BackupHistory = () => {
       alert('Backup deleted successfully!');
       await loadHistory();
     } catch (error) {
-      alert('FAILED to delete backup.');
+      alert(error.message || 'Failed to delete backup.');
     } finally {
       setActionId(null);
     }
@@ -85,7 +85,7 @@ const BackupHistory = () => {
       alert('Download started successfully!');
     } catch (error) {
       console.error('Error downloading backup:', error);
-      alert('FAILED to download backup. The file might not exist on the server.');
+      alert(error.message || 'Failed to download backup.');
     } finally {
       setActionId(null);
     }
@@ -102,7 +102,7 @@ const BackupHistory = () => {
       await loadHistory();
     } catch (error) {
       console.error('Error restoring backup:', error);
-      alert('FAILED to restore database. Please check server logs.');
+      alert(error.message || 'Failed to restore database.');
     } finally {
       setActionId(null);
     }

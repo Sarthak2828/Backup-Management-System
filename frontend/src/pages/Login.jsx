@@ -32,7 +32,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      await authService.login(username, password);
+      await authService.login(username.trim(), password);
       // Success - Redirect
       navigate(from, { replace: true });
     } catch (err) {

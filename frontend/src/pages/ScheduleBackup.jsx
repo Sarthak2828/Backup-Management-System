@@ -62,7 +62,7 @@ const ScheduleBackup = () => {
         navigate('/history');
       }, 1500);
     } catch (err) {
-      setError('Failed to save the backup configuration.');
+      setError(err.message || 'Failed to save the backup configuration.');
     } finally {
       setLoading(false);
     }

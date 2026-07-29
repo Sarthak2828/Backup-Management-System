@@ -22,6 +22,30 @@ apiClient.interceptors.request.use(
   }
 );
 
+// Response interceptor for status-specific friendly error messages
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401) {
+          error.message = "Session expired or invalid credentials. Please login again.";
+        } else if (status === 403) {
+          error.message = "Permission denied: Your account has Auditor access. Auditors have read-only permissions and cannot create, schedule, restore, delete, or download backups.";
+        } else if (status >= 500) {
+          error.message = "An unexpected server error occurred. Please try again later.";
+        } else {
+          error.message = error.response.data?.message || `HTTP ${status} Error`;
+        }
+      } else {
+        error.message = "Unable to connect to backend service. Please check your connection.";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Centralized API Services
 export const authService = {
   /**
@@ -30,8 +54,9 @@ export const authService = {
    */
   login: async (username, password) => {
     try {
+      const cleanUsername = username ? username.trim() : '';
       const response = await apiClient.post("/auth/login", {
-        username,
+        username: cleanUsername,
         password,
       });
 
@@ -43,17 +68,7 @@ export const authService = {
       return userData;
 
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          if (error.response.status === 401 || error.response.status === 400) {
-            throw new Error(error.response.data?.message || "Invalid username or password.");
-          }
-          throw new Error(error.response.data?.message || `Server error (${error.response.status})`);
-        }
-        throw new Error("Network error: Unable to connect to backend service.");
-      }
-
-      throw new Error("Something went wrong during login.");
+      throw new Error(error.message || "Something went wrong during login.");
     }
   },
   logout: () => {

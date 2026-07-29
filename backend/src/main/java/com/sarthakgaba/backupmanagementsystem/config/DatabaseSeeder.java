@@ -28,7 +28,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Clean up duplicate admin accounts if any exist
         List<User> admins = userRepository.findAll().stream()
-                .filter(u -> u.getUsername() != null && u.getUsername().equalsIgnoreCase("admin"))
+                .filter(u -> u.getUsername() != null && u.getUsername().trim().equalsIgnoreCase("admin"))
                 .toList();
 
         User admin;
@@ -43,6 +43,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 log.info("Deleted duplicate admin account with ID: {}", admins.get(i).getId());
             }
         }
+        admin.setUsername("admin");
         admin.setPassword(passwordEncoder.encode("password"));
         admin.setRole(Role.ADMIN);
         userRepository.save(admin);
@@ -50,7 +51,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // Clean up duplicate auditor accounts if any exist
         List<User> auditors = userRepository.findAll().stream()
-                .filter(u -> u.getUsername() != null && u.getUsername().equalsIgnoreCase("auditor"))
+                .filter(u -> u.getUsername() != null && u.getUsername().trim().equalsIgnoreCase("auditor"))
                 .toList();
 
         User auditor;
@@ -65,6 +66,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 log.info("Deleted duplicate auditor account with ID: {}", auditors.get(i).getId());
             }
         }
+        auditor.setUsername("auditor");
         auditor.setPassword(passwordEncoder.encode("password"));
         auditor.setRole(Role.USER);
         userRepository.save(auditor);

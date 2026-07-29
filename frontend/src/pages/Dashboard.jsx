@@ -48,7 +48,7 @@ const Dashboard = () => {
       // Reload stats and tables
       await loadDashboardData();
     } catch (error) {
-      alert('Failed to trigger backup.');
+      alert(error.message || 'Failed to trigger backup.');
     } finally {
       setTriggeringId(null);
     }

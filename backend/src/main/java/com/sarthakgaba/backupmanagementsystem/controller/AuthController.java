@@ -38,8 +38,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
         User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
+        user.setUsername(request.getUsername() != null ? request.getUsername().trim() : "");
+        user.setEmail(request.getEmail() != null ? request.getEmail().trim() : "");
         user.setPassword(request.getPassword());
 
         userService.registerUser(user);
@@ -49,22 +49,25 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        String cleanUsername = request.getUsername() != null ? request.getUsername().trim() : "";
+        String cleanPassword = request.getPassword() != null ? request.getPassword() : "";
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(cleanUsername, cleanPassword)
         );
 
         List<User> matchingUsers = userRepository.findAll().stream()
-                .filter(u -> u.getUsername() != null && u.getUsername().equalsIgnoreCase(request.getUsername()))
+                .filter(u -> u.getUsername() != null && u.getUsername().trim().equalsIgnoreCase(cleanUsername))
                 .toList();
 
         if (matchingUsers.isEmpty()) {
-            throw new RuntimeException("User not found: " + request.getUsername());
+            throw new RuntimeException("User not found: " + cleanUsername);
         }
 
         User user = matchingUsers.get(0);
         String roleName = (user.getRole() == Role.ADMIN) ? "ADMIN" : "AUDITOR";
-        String token = jwtUtil.generateToken(user.getUsername(), roleName);
+        String token = jwtUtil.generateToken(user.getUsername().trim(), roleName);
 
-        return ResponseEntity.ok(new LoginResponse(token, user.getUsername(), roleName));
+        return ResponseEntity.ok(new LoginResponse(token, user.getUsername().trim(), roleName));
     }
 }

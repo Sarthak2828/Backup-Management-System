@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,18 +23,23 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+        String cleanUsername = username != null ? username.trim() : "";
+
+        List<User> matchingUsers = userRepository.findAll().stream()
+                .filter(u -> u.getUsername() != null && u.getUsername().trim().equalsIgnoreCase(cleanUsername))
+                .toList();
+
+        if (matchingUsers.isEmpty()) {
+            throw new UsernameNotFoundException("User not found with username: " + cleanUsername);
         }
 
+        User user = matchingUsers.get(0);
         String roleName = user.getRole() == Role.ADMIN ? "ROLE_ADMIN" : "ROLE_AUDITOR";
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleName);
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .authorities(Collections.singletonList(authority))
-                .build();
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername().trim(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority(roleName))
+        );
     }
 }
