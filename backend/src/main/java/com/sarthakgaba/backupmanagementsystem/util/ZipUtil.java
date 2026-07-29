@@ -23,4 +23,32 @@ public class ZipUtil {
             zos.closeEntry();
         }
     }
+    public static void unzipFile(File zipFile, File destDir) throws IOException {
+        if (!zipFile.exists()) {
+            throw new IllegalArgumentException("Zip file does not exist: " + zipFile.getAbsolutePath());
+        }
+        if (!destDir.exists()) {
+            destDir.mkdirs();
+        }
+        try (java.util.zip.ZipInputStream zis = new java.util.zip.ZipInputStream(new FileInputStream(zipFile))) {
+            ZipEntry zipEntry = zis.getNextEntry();
+            while (zipEntry != null) {
+                File newFile = new File(destDir, zipEntry.getName());
+                String destDirPath = destDir.getCanonicalPath();
+                String newFilePath = newFile.getCanonicalPath();
+                if (!newFilePath.startsWith(destDirPath + File.separator)) {
+                    throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+                }
+                try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+                zipEntry = zis.getNextEntry();
+            }
+            zis.closeEntry();
+        }
+    }
 }

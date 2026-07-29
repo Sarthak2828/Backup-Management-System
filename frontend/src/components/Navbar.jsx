@@ -20,14 +20,7 @@ const Navbar = ({ toggleSidebar, title }) => {
         {/* Current Page Title */}
         <h4 className="m-0 fw-semibold text-secondary">{title}</h4>
       </div>
-
       <div className="d-flex align-items-center gap-3">
-        {/* Connection status badge (dummy representation) */}
-        <span className="badge bg-success-subtle text-success border border-success-subtle d-none d-sm-inline-flex align-items-center gap-1 py-1 px-2 rounded-pill">
-          <span className="spinner-grow spinner-grow-sm text-success" style={{ width: '8px', height: '8px' }} role="status"></span>
-          Backend Offline (Demo Mode)
-        </span>
-
         {/* User profile dropdown/display */}
         <div className="d-flex align-items-center gap-2">
           <div className="text-end d-none d-md-block">

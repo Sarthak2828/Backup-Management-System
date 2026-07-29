@@ -15,9 +15,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${cors.allowed-origins:http://localhost:5173,http://localhost:5174}")
+    private List<String> allowedOrigins;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -38,8 +43,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/backups").hasAnyRole("ADMIN", "AUDITOR")
-                        .requestMatchers(HttpMethod.POST, "/api/backups").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/backups/schedule").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/backups/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/backups/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/backups/download/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -49,13 +54,8 @@ public class SecurityConfig {
     }
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "http://localhost:5174"
-        ));
+        configuration.setAllowedOrigins(allowedOrigins);
 
         configuration.setAllowedMethods(List.of(
                 "GET",

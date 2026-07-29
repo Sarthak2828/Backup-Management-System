@@ -23,4 +23,28 @@ public class DatabaseUtil {
         }
         return dbPath;
     }
+
+    public static String extractHost(String jdbcUrl) {
+        String prefix = "jdbc:mysql://";
+        if (jdbcUrl == null || !jdbcUrl.startsWith(prefix)) {
+            return "localhost";
+        }
+        String hostPortDb = jdbcUrl.substring(prefix.length());
+        int slashIndex = hostPortDb.indexOf('/');
+        String hostPort = (slashIndex != -1) ? hostPortDb.substring(0, slashIndex) : hostPortDb;
+        int colonIndex = hostPort.indexOf(':');
+        return (colonIndex != -1) ? hostPort.substring(0, colonIndex) : hostPort;
+    }
+
+    public static String extractPort(String jdbcUrl) {
+        String prefix = "jdbc:mysql://";
+        if (jdbcUrl == null || !jdbcUrl.startsWith(prefix)) {
+            return "3306";
+        }
+        String hostPortDb = jdbcUrl.substring(prefix.length());
+        int slashIndex = hostPortDb.indexOf('/');
+        String hostPort = (slashIndex != -1) ? hostPortDb.substring(0, slashIndex) : hostPortDb;
+        int colonIndex = hostPort.indexOf(':');
+        return (colonIndex != -1) ? hostPort.substring(colonIndex + 1) : "3306";
+    }
 }

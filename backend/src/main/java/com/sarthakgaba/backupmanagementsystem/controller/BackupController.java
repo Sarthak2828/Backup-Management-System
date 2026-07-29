@@ -29,13 +29,40 @@ public class BackupController {
         BackupJob scheduled = backupService.scheduleBackup(backupJob);
         return ResponseEntity.ok(scheduled);
     }
+    @PostMapping("/{id}/run")
+    public ResponseEntity<BackupJob> runBackup(@PathVariable Long id) {
+        BackupJob created = backupService.runBackup(id);
+        return ResponseEntity.ok(created);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteBackup(@PathVariable Long id) {
+        try {
+            backupService.deleteBackup(id);
+            return ResponseEntity.ok("Backup deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PostMapping("/{id}/restore")
+    public ResponseEntity<String> restoreBackup(@PathVariable Long id) {
+        try {
+            backupService.restoreBackup(id);
+            return ResponseEntity.ok("Database restored successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body("Restore failed: " + e.getMessage());
+        }
+    }
     @GetMapping("/download/{id}")
     public ResponseEntity<Resource> downloadBackup(@PathVariable Long id) {
-        Resource resource = backupService.downloadBackup(id);
-        String filename = resource.getFilename() != null ? resource.getFilename() : "backup.zip.enc";
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+        try {
+            Resource resource = backupService.downloadBackup(id);
+            String filename = resource.getFilename() != null ? resource.getFilename() : "backup.zip.enc";
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

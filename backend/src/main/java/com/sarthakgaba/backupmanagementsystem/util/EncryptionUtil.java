@@ -36,6 +36,31 @@ public class EncryptionUtil {
             }
         }
     }
+    public static void decryptFile(File sourceFile, File destFile, String secret) throws Exception {
+        if (!sourceFile.exists()) {
+            throw new IllegalArgumentException("Source file does not exist: " + sourceFile.getAbsolutePath());
+        }
+        SecretKeySpec secretKey = deriveKey(secret);
+        try (FileInputStream fis = new FileInputStream(sourceFile);
+             FileOutputStream fos = new FileOutputStream(destFile)) {
+            byte[] ivBytes = new byte[16];
+            int ivBytesRead = fis.read(ivBytes);
+            if (ivBytesRead != 16) {
+                throw new IllegalArgumentException("Invalid encrypted file: IV is missing or truncated.");
+            }
+            IvParameterSpec ivSpec = new IvParameterSpec(ivBytes);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+            try (javax.crypto.CipherInputStream cis = new javax.crypto.CipherInputStream(fis, cipher)) {
+                byte[] buffer = new byte[4096];
+                int length;
+                while ((length = cis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, length);
+                }
+                fos.flush();
+            }
+        }
+    }
     private static SecretKeySpec deriveKey(String secret) throws NoSuchAlgorithmException {
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         MessageDigest sha = MessageDigest.getInstance("SHA-256");

@@ -10,6 +10,14 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  const formatBytes = (bytes) => {
+    if (bytes === undefined || bytes === null || bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   // Load stats and activity history
   const loadDashboardData = async () => {
     try {
@@ -76,63 +84,78 @@ const Dashboard = () => {
       {/* Metrics Row */}
       <div className="row g-4 mb-4">
         
-        {/* Stat 1 */}
-        <div className="col-12 col-sm-6 col-xl-3">
+        {/* Stat 1: Total Backups */}
+        <div className="col-12 col-sm-6 col-md-4 col-xl">
           <div className="card border-0 shadow-sm h-100">
-            <div className="card-body d-flex align-items-center justify-content-between p-4">
+            <div className="card-body d-flex align-items-center justify-content-between p-3">
               <div>
-                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Total Configurations</span>
-                <span className="fs-3 fw-bold text-dark">{stats?.totalBackups}</span>
+                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Total Backups</span>
+                <span className="fs-4 fw-bold text-dark">{stats?.totalBackups}</span>
               </div>
-              <div className="bg-primary-subtle text-primary p-3 rounded">
-                <i className="bi bi-gear-wide-connected fs-4"></i>
+              <div className="bg-primary-subtle text-primary p-2.5 rounded">
+                <i className="bi bi-hdd-stack fs-5"></i>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Stat 2 */}
-        <div className="col-12 col-sm-6 col-xl-3">
+        {/* Stat 2: Successful Backups */}
+        <div className="col-12 col-sm-6 col-md-4 col-xl">
           <div className="card border-0 shadow-sm h-100">
-            <div className="card-body d-flex align-items-center justify-content-between p-4">
+            <div className="card-body d-flex align-items-center justify-content-between p-3">
               <div>
-                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Backup Success Rate</span>
-                <span className="fs-3 fw-bold text-success">{stats?.successRate}%</span>
+                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Successful</span>
+                <span className="fs-4 fw-bold text-success">{stats?.successfulCount}</span>
               </div>
-              <div className="bg-success-subtle text-success p-3 rounded">
-                <i className="bi bi-check-circle-fill fs-4"></i>
+              <div className="bg-success-subtle text-success p-2.5 rounded">
+                <i className="bi bi-check-circle-fill fs-5"></i>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Stat 3 */}
-        <div className="col-12 col-sm-6 col-xl-3">
+        {/* Stat 3: Failed Backups */}
+        <div className="col-12 col-sm-6 col-md-4 col-xl">
           <div className="card border-0 shadow-sm h-100">
-            <div className="card-body d-flex align-items-center justify-content-between p-4">
+            <div className="card-body d-flex align-items-center justify-content-between p-3">
               <div>
-                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Total Storage Used</span>
-                <span className="fs-3 fw-bold text-info">{stats?.storageSize}</span>
+                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Failed</span>
+                <span className={`fs-4 fw-bold ${stats?.failedCount > 0 ? 'text-danger' : 'text-muted'}`}>{stats?.failedCount}</span>
               </div>
-              <div className="bg-info-subtle text-info p-3 rounded">
-                <i className="bi bi-hdd-network fs-4"></i>
+              <div className="bg-danger-subtle text-danger p-2.5 rounded">
+                <i className="bi bi-exclamation-octagon fs-5"></i>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Stat 4 */}
-        <div className="col-12 col-sm-6 col-xl-3">
+        {/* Stat 4: Total Storage Used */}
+        <div className="col-12 col-sm-6 col-md-4 col-xl">
           <div className="card border-0 shadow-sm h-100">
-            <div className="card-body d-flex align-items-center justify-content-between p-4">
+            <div className="card-body d-flex align-items-center justify-content-between p-3">
               <div>
-                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Active Failure Alerts</span>
-                <span className={`fs-3 fw-bold ${stats?.failedAlerts > 0 ? 'text-danger' : 'text-muted'}`}>
-                  {stats?.failedAlerts}
+                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Storage Used</span>
+                <span className="fs-4 fw-bold text-info">{stats?.storageSize}</span>
+              </div>
+              <div className="bg-info-subtle text-info p-2.5 rounded">
+                <i className="bi bi-hdd-network fs-5"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stat 5: Last Backup Time */}
+        <div className="col-12 col-sm-6 col-md-4 col-xl">
+          <div className="card border-0 shadow-sm h-100">
+            <div className="card-body d-flex align-items-center justify-content-between p-3">
+              <div>
+                <span className="text-uppercase text-muted fw-semibold small d-block mb-1">Last Backup Time</span>
+                <span className="fs-6 fw-bold text-secondary d-block mt-1">
+                  {stats?.lastBackupTime}
                 </span>
               </div>
-              <div className={`p-3 rounded ${stats?.failedAlerts > 0 ? 'bg-danger-subtle text-danger' : 'bg-light text-secondary'}`}>
-                <i className="bi bi-exclamation-octagon fs-4"></i>
+              <div className="bg-warning-subtle text-warning p-2.5 rounded">
+                <i className="bi bi-calendar-event fs-5"></i>
               </div>
             </div>
           </div>
@@ -182,8 +205,10 @@ const Dashboard = () => {
                               {job.databaseName}
                             </small>
                           </td>
-                          <td>{job.fileSize} bytes</td>
-                          <td className="text-muted small">{job.backupTime}</td>
+                           <td>{formatBytes(job.fileSize)}</td>
+                           <td className="text-muted small">
+                             {job.backupTime ? new Date(job.backupTime).toLocaleString() : 'N/A'}
+                           </td>
                           <td>
                             <span className={`badge px-2.5 py-1.5 rounded-pill ${
                               job.status === 'COMPLETED' ? 'bg-success-subtle text-success border border-success-subtle' :

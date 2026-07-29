@@ -6,6 +6,7 @@ $RECYCLE.BIN/
 *.lnk
 powershell.bat
 
+
 # IDEs and Editors
 .idea/
 .vscode/
