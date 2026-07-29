@@ -122,16 +122,12 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Hint Box */}
+            {/* Notice Box */}
             <div className="mt-4 p-3 bg-light rounded text-center border">
-              <span className="text-muted d-block small mb-1">
-                <i className="bi bi-info-circle-fill text-info me-1"></i>
-                <strong>Demo Mode Credentials</strong>
+              <span className="text-muted d-block small">
+                <i className="bi bi-shield-lock text-primary me-1"></i>
+                Please sign in using your assigned system credentials.
               </span>
-              <code className="small text-dark">
-                Admin: admin / password <br />
-                Auditor: auditor / password
-              </code>
             </div>
 
           </div>
