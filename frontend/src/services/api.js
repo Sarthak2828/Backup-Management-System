@@ -44,10 +44,13 @@ export const authService = {
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(
-            error.response?.data?.message ||
-            "Invalid username or password."
-        );
+        if (error.response) {
+          if (error.response.status === 401 || error.response.status === 400) {
+            throw new Error(error.response.data?.message || "Invalid username or password.");
+          }
+          throw new Error(error.response.data?.message || `Server error (${error.response.status})`);
+        }
+        throw new Error("Network error: Unable to connect to backend service.");
       }
 
       throw new Error("Something went wrong during login.");
